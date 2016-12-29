@@ -8,12 +8,16 @@ RUN apt-get update && apt-get install -y software-properties-common && \
    apt-get install -y ffdiaporama ffdiaporama-texturemate  ffdiaporama-openclipart && \
    apt-get clean      
 
-ENV USERNAME ffdiaporama
-ENV AUDIOGROUP audio
-# Replace 1000 with your user 
-ENV USERID 1000
+ARG USERNAME=ffdiaporama
+ARG AUDIOGROUP=29
+ARG USERID=1000
 
-RUN adduser --uid $USERID --disabled-password --ingroup $AUDIOGROUP $USERNAME
+RUN export AUDIOGROUP_NAME=$(sed -e  's/^\([^:]*\):.*:'${AUDIOGROUP}':.*$/\1/p' -n /etc/group); \
+       if [ -z "$AUDIOGROUP_NAME" ]; then \
+                addgroup --gid $AUDIOGROUP ffd_audio; \
+		export AUDIOGROUP_NAME=ffd_audio; \
+       fi; \
+       adduser --uid $USERID --disabled-password --ingroup $AUDIOGROUP_NAME $USERNAME
 
 WORKDIR /home/$USERNAME
 

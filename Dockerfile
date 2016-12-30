@@ -2,10 +2,13 @@ FROM ubuntu:trusty
 
 MAINTAINER Joerg Matysiak
 
+## install ffdiaporama from ppa
+## install all available fonts 
 RUN apt-get update && apt-get install -y software-properties-common && \
    add-apt-repository ppa:ffdiaporamateam/stable && \
    apt-get update && \
    apt-get install -y ffdiaporama ffdiaporama-texturemate  ffdiaporama-openclipart && \
+   apt-get install $(apt-cache search  ^fonts-  | cut -f1 '-d ') && \
    apt-get clean      
 
 ARG USERNAME=ffdiaporama
